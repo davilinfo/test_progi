@@ -1,0 +1,103 @@
+# ===========================
+# .NET Backend
+# ===========================
+
+# Build output
+bin/
+obj/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# Rider
+.idea/
+*.sln.iml
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage*/
+
+# Publish output
+publish/
+*.pubxml
+*.pubxml.user
+
+# Entity Framework migrations (keep if you use them)
+# Migrations/
+
+# ===========================
+# Vue.js / Node Frontend
+# ===========================
+
+# Dependencies
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+frontend/dist-ssr/
+
+# Vite cache
+frontend/.vite/
+
+# Environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# ===========================
+# Docker
+# ===========================
+.dockerignore
+
+# ===========================
+# OS / Editor
+# ===========================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VSCode
+.vscode/
+!.vscode/extensions.json
+
+# JetBrains
+*.iml
+
+# ===========================
+# Secrets / Environment
+# ===========================
+*.env
+appsettings.Development.json
+appsettings.Local.json
+secrets.json

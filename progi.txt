@@ -1,0 +1,133 @@
+System design document
+
+1-What is the Project
+This is a test to get admitted on a company therefore utilize coding best practices. Write a backend and frontend website as a Senior Engineer. The backend should be a Restfull stateless API with clean code architecture, utilization of coding best practices, design patterns, unit tests. Develop an application that will allow a buyer to calculate the total price of a vehicle (common or luxury) at a car auction. The software must consider several costs in the calculation. The buyer must pay various fees for the transaction, all of which are calculated on the base price amount. The total amount calculated is the winning bid amount (vehicle base price) plus the fees based on the vehicle price and vehicle type. 
+Fees must be dynamically computed.
+
+2-Requirements
+functional:
+
+frontend
+-There is a field to enter the vehicle base price
+-There is a field to specify the vehicle type (Common or Luxury) 
+-The list of fees and their amount are displayed
+-The total cost is automatically computed and displayed every time the price or type changes
+
+non-functional: 
+
+backend:
+-CRUD operations
+-utilize async/await pattern for improving scalibity on .NET API
+-utilize entity framework core in-memory database
+-CORS should allow requests from any origin
+-Swagger
+-Application should run on Docker
+
+
+3-Design Considerations
+backend:
+-Vertical slice
+-Mediator with MediatR
+-Repository pattern
+-thin controller
+-.NET 10
+frontend:
+-should be written with Vue.js + pinea + fetch
+-store should contains actions for calling .NET backend API
+
+4-Capacity estimation
+It should be able to handle 100 requests / day
+
+5-API
+API should utlize correct routes, verbs, status code, return response object
+
+6-Database design
+-It should utilize Entity Framework core in memory
+-DbContext per request
+-No lazy loading
+
+vehicle(id, plate, type (Common | Luxury), year, model, photo)
+buyer (id, name, age, phone, email)
+seller (id, name, phone, email)
+auction (id, buyer_id, seller_id, vehicle_id, base_price, price, status (active|inactive), start_date, end_date)
+buyer_fee (id, fee_common_min, fee_common_max, fee_luxury_min, fee_luxury_max)
+seller_fee (id, fee_common, fee_luxury)
+association_fee (id, fee, min range, max_range)
+storage_fee (id, fee)
+
+7-high level design
+-buyer should access website and see vehicles in auction (active) and be able to set a price for the specific auction
+-when auctions finishes then auction final price should be computed based on the business rule assumptions formula.
+-auctions should be inactive after end of the auction
+-requests on web api should log on service layer on request handlers, validation failures, domain exceptions
+
+8-project structure
+as vertical slice organize service as follow:
+-Feature
+	-Vehicle
+		-Repository
+			-IVehicleRepository
+			-VehicleRepository
+		-Create
+			-CreateVehicleCommand
+			-Handler
+			-Validator
+		-GetById
+			-Handler
+-Shared
+	-Model
+	-Entity
+	-Infrastructure
+		-AppDbContext
+
+9-Caching
+It is a test Project so not necessary. But if real one we can think on distributed cash with Redis
+
+10-Security
+-Utilize JWT Bearer authentication
+-Authentication roles (Buyer|Seller|Admin)
+-Seller should be able to create, update (when no auction or auction is inactive), retrieve information on any vehicle. Also, it should be able to initiate an auction. It should be able to CRUD its own seller data
+-Buyer should be able to retrieve information on any vehicle, and set auction prices of an auction, also register its own buyer data
+
+11-Unit tests (xUnit, MOQ, AAA)
+-backend should utilize xUnit library for unit tests with MOQ for mocks and follow Arrange, Act, Assert pattern.
+
+Some test cases:
+-vehicle price:398.00, vehicle type: Common, basic: 39.80, special: 7.96, associate, 5.00, storage: 100.00, total: 550.76
+-vehicle price:50.00, vehicle type: Common, basic: 50, special: 10.02, associate, 10.00, storage: 100.00, total: 671.02
+-vehicle price:10.00, vehicle type: Common, basic: 10, special: 1.14, associate, 5.00, storage: 100.00, total: 173.14
+-vehicle price:1800.00, vehicle type: Luxury, basic: 180, special: 72, associate, 15.00, storage: 100.00, total: 2167.00
+
+
+12- Assumptions
+These are business rules for the fees. Seed database enities related to fees with such information and also provide compute calculation for calculating auctions and update the price. Also utilize such information for list fees. Seed database with buyers, sellers, vehicle, and at least 5 auctions.
+Fixed and Variable Costs 
+ - Basic buyer fee: 10% of the price of the vehicle 
+	o Common: minimum $10 and maximum $50 
+	o Luxury: minimum 25$ and maximum 200$
+ - The seller's special fee: 
+	o Common: 2% of the vehicle price  
+	o Luxury: 4% of the vehicle price 
+ - The added costs for the association based on the price of the vehicle: 
+	o $5 for an amount between $1 and $500 
+	o $10 for an amount greater than $500 up to $1000 
+	o $15 for an amount greater than $1000 up to $3000 
+	o $20 for an amount over $3000 
+ - A fixed storage fee of $100 
+
+Here is a Calculation Example 
+- Vehicle Price (Common): $1000 
+- Basic buyer fee: $50 (10%, min: $10, max. $50) 
+- Special fee: $20 (2%) 
+- Association fee: $10  
+- Storage fee: $100  
+- Total: $1180 = 1000$ + 50$ + 20$ + 10$ + $100
+
+13-Definitions of done
+-API runs
+-Swagger loads
+-Endpoints are callable
+-Website loads
+-User can set a price for a vehicle in auction
+-Unit tests pass
+-Application runs on docker

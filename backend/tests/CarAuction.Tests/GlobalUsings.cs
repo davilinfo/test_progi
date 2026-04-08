@@ -1,0 +1,9 @@
+global using Xunit;
+global using FluentAssertions;
+global using Moq;
+global using CarAuction.Api.Shared.Entity;
+global using CarAuction.Api.Shared.Enums;
+global using CarAuction.Api.Shared.Exceptions;
+global using CarAuction.Api.Shared.Infrastructure;
+global using CarAuction.Api.Shared.Model;
+global using CarAuction.Api.Shared.Services;
