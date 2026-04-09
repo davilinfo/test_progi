@@ -11,8 +11,10 @@ What I would do/did differently
 -I would update log level accordingly in the code with Log.Debug (flow validation); Log.Information (business rules); Log.Warning (fallback); Log.Error (original exceptions)
 -I would use a Mapper for converting the entity to the response object
 -I could have different assemblies for features and shared functionalities
--I would add a total_price field at auction entity that would contain the bid price value + all fees
+-I would add a total_price field at the auction entity that would contain the bid price value + all fees
+-I would add a real database
+-I would configure for Kubernetes utilization
 
 --Run Details
--If you run outside Docker, then you need to update the frontend the vite.config.js file to reach the backend api accordingly as it has a different port from docker version
+-If you run outside Docker, then you need to update the frontend .env.development file or .env.production file to reach the backend api accordingly, as it has a different port from docker version
 -Docker runs fine (it was configured to run in a Linux container)
