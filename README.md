@@ -45,7 +45,7 @@ npm run dev
 
 Frontend available at: `http://localhost:5173`
 
-> The Vite dev server proxies `/api` requests to `http://localhost:8080`. For local dev (not Docker), update `vite.config.js` proxy target to `http://localhost:65501`.
+> The Vite dev server proxies `/api` requests to `http://localhost:8080`.
 
 ---
 
