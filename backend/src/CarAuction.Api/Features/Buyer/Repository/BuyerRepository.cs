@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using CarAuction.Api.Features.Buyer.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,14 +24,11 @@ public class BuyerRepository : IBuyerRepository
     {
         var query = _context.Buyers.AsNoTracking().AsQueryable();
 
-        if (age.HasValue)
-            query = query.Where(b => b.Age == age.Value);
-
-        if (!string.IsNullOrWhiteSpace(name))
-            query = query.Where(b => b.Name.Contains(name));
-
-        if (!string.IsNullOrWhiteSpace(email))
-            query = query.Where(b => b.Email.Contains(email));
+        query = query.Where(b =>
+             (!age.HasValue || b.Age == age.Value) &&
+             (string.IsNullOrWhiteSpace(name) || Regex.IsMatch(b.Name, name, RegexOptions.IgnoreCase )) &&
+             (string.IsNullOrWhiteSpace(email) || Regex.IsMatch(b.Email, email, RegexOptions.IgnoreCase ))
+        );
 
         return await query.ToListAsync(cancellationToken);
     }
