@@ -10,7 +10,11 @@ public class GetAllBuyersHandler : IRequestHandler<GetAllBuyersQuery, IEnumerabl
 
     public async Task<IEnumerable<BuyerResponse>> Handle(GetAllBuyersQuery request, CancellationToken cancellationToken)
     {
-        var buyers = await _repository.GetAllAsync(cancellationToken);
+        var buyers = await _repository.GetAllAsync(
+            request.FilterAge,
+            request.FilterName,
+            request.FilterEmail,
+            cancellationToken);
         return buyers.Select(CreateBuyerHandler.ToResponse);
     }
 }

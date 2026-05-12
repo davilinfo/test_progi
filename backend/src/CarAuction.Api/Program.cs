@@ -6,9 +6,11 @@ using CarAuction.Api.Features.Buyer.Repository;
 using CarAuction.Api.Features.Fee.Repository;
 using CarAuction.Api.Features.Seller.Repository;
 using CarAuction.Api.Features.Vehicle.Repository;
+using CarAuction.Api.GraphQL;
 using CarAuction.Api.Shared.Behaviors;
 using CarAuction.Api.Shared.Middleware;
 using FluentValidation;
+using HotChocolate.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -80,6 +82,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
+// GraphQL for buyer operations only
+builder.Services.AddGraphQLServer()
+    .AddQueryType<Query>()
+    .AddMutationType<Mutation>();
+
 // MediatR with pipeline behaviors
 builder.Services.AddMediatR(cfg =>
 {
@@ -120,6 +127,7 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapGraphQL("/graphql");
 
 app.Run();
 

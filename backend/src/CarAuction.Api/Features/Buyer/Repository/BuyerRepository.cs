@@ -15,6 +15,26 @@ public class BuyerRepository : IBuyerRepository
     public async Task<IEnumerable<Shared.Entity.Buyer>> GetAllAsync(CancellationToken cancellationToken = default)
         => await _context.Buyers.AsNoTracking().ToListAsync(cancellationToken);
 
+    public async Task<IEnumerable<Shared.Entity.Buyer>> GetAllAsync(
+        int? age = null,
+        string? name = null,
+        string? email = null,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _context.Buyers.AsNoTracking().AsQueryable();
+
+        if (age.HasValue)
+            query = query.Where(b => b.Age == age.Value);
+
+        if (!string.IsNullOrWhiteSpace(name))
+            query = query.Where(b => b.Name.Contains(name));
+
+        if (!string.IsNullOrWhiteSpace(email))
+            query = query.Where(b => b.Email.Contains(email));
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
     public async Task<Shared.Entity.Buyer> CreateAsync(Shared.Entity.Buyer buyer, CancellationToken cancellationToken = default)
     {
         buyer.Id = Guid.NewGuid();
