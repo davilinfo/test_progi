@@ -1,3 +1,7 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using CarAuction.Api.Features.Auth.Login;
+using CarAuction.Api.Shared.Model;
 using Microsoft.Playwright;
 using Xunit;
 
@@ -50,5 +54,49 @@ public class PlaywrightExampleTests : IAsyncLifetime
 
         response.Ok.Should().BeTrue();
         response.Headers.Should().ContainKey("content-type");
+    }
+
+    [Theory]
+    [InlineData("00000000-0000-0000-0005-000000000001", 10000)]
+    public async Task AuctionApi_Should_Return_Ok_Post_Auction_Value(string auctionId, decimal value)
+    {
+        await using var apiRequest = await _playwright!.APIRequest.NewContextAsync(new APIRequestNewContextOptions
+        {
+            BaseURL = "http://localhost:8080",
+
+        });
+
+        var responseAuth = await apiRequest.PostAsync($"/api/auth/login", new APIRequestContextOptions
+        {
+            DataObject = new
+            {
+                email = "buyer1@carauction.com",
+                password = "Password123!"
+            }
+        });
+
+        var authText = await responseAuth.TextAsync();
+        var authPayload = JsonSerializer.Deserialize<ApiResponse<LoginResponse>>(authText, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter() }
+        });
+        var loginResponse = authPayload?.Data;
+
+        loginResponse.Should().NotBeNull();
+
+        var response = await apiRequest.PostAsync($"/api/auctions/{auctionId}/bid", new APIRequestContextOptions
+        {
+            DataObject = new
+            { 
+                BidAmount = value
+            },
+            Headers = new Dictionary<string, string>
+            {
+                {"Authorization", $"Bearer {loginResponse!.Token}" }
+            }
+        });
+
+        response.Ok.Should().BeTrue();
     }
 }
